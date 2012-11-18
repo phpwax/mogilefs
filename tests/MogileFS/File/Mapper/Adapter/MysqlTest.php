@@ -1,7 +1,9 @@
 <?php
-require_once 'MogileFS/File/Mapper/Adapter/Abstract.php';
-require_once 'MogileFS/File/Mapper/Adapter/Mysql.php';
-require_once 'MogileFS/File/Mapper/Adapter/Tracker.php';
+use MogileFS\Exception;
+use MogileFS\File\Mapper\Adapter\Base;
+use MogileFS\File\Mapper\Adapter\Mysql;
+use MogileFS\File\Mapper\Adapter\Tracker;
+
 /**
  * 
  * Test case for mysql read only adapter
@@ -20,22 +22,22 @@ class MysqlAdapterTest extends PHPUnit_Framework_TestCase
 	{
 		$this->_configFile = realpath(dirname(__FILE__) . '/../../../config.php');
 		$config = include $this->_configFile;
-		$this->_mysqlAdapter = new MogileFS_File_Mapper_Adapter_Mysql($config['mysql']);
-		$this->_trackerAdapter = new MogileFS_File_Mapper_Adapter_Tracker($config['tracker']);
+		$this->_mysqlAdapter = new Mysql($config['mysql']);
+		$this->_trackerAdapter = new Tracker($config['tracker']);
 	}
 
 	public function testInstance()
 	{
 		$this
-				->assertInstanceOf('MogileFS_File_Mapper_Adapter_Abstract',
-						new MogileFS_File_Mapper_Adapter_Mysql());
+				->assertInstanceOf('MogileFS\File\Mapper\Adapter\Base',
+						new Mysql());
 	}
 
 	public function testSettersAndGetters()
 	{
-		$adapter = new MogileFS_File_Mapper_Adapter_Mysql();
+		$adapter = new Mysql();
 		$this
-				->assertInstanceOf('MogileFS_File_Mapper_Adapter_Mysql',
+				->assertInstanceOf('MogileFS\File\Mapper\Adapter\Mysql',
 						$adapter->setHostsUp(array(
 									1, 2, 3, 4
 								)));
@@ -68,12 +70,12 @@ class MysqlAdapterTest extends PHPUnit_Framework_TestCase
 	 */
 	public function testInvalidMysqlOptionsValidation()
 	{
-		$adapter = new MogileFS_File_Mapper_Adapter_Mysql(array(
+		$adapter = new Mysql(array(
 			'domain' => 'toast'
 		));
 		try {
 			$adapter->getMysql();
-		} catch (MogileFS_Exception $exc) {
+		} catch (Exception $exc) {
 			$this->assertLessThan(200, $exc->getCode(), 'Got unexpected exception code');
 			$this->assertGreaterThanOrEqual(100, $exc->getCode(), 'Got unexpected exception code');
 			return;
@@ -87,13 +89,13 @@ class MysqlAdapterTest extends PHPUnit_Framework_TestCase
 	 */
 	public function testInvalidMysqlOptions2Validation()
 	{
-		$adapter = new MogileFS_File_Mapper_Adapter_Mysql(
+		$adapter = new Mysql(
 				array(
 					'domain' => 'toast', 'pdo_options' => 'host:lala'
 				));
 		try {
 			$adapter->getMysql();
-		} catch (MogileFS_Exception $exc) {
+		} catch (Exception $exc) {
 			$this->assertLessThan(200, $exc->getCode(), 'Got unexpected exception code');
 			$this->assertGreaterThanOrEqual(100, $exc->getCode(), 'Got unexpected exception code');
 			return;
@@ -107,13 +109,13 @@ class MysqlAdapterTest extends PHPUnit_Framework_TestCase
 	 */
 	public function testInvalidMysqlOptions3Validation()
 	{
-		$adapter = new MogileFS_File_Mapper_Adapter_Mysql(
+		$adapter = new Mysql(
 				array(
 					'domain' => 'toast', 'pdo_options' => 'host:lala', 'username' => 'mogile'
 				));
 		try {
 			$adapter->getMysql();
-		} catch (MogileFS_Exception $exc) {
+		} catch (Exception $exc) {
 			$this->assertLessThan(200, $exc->getCode(), 'Got unexpected exception code');
 			$this->assertGreaterThanOrEqual(100, $exc->getCode(), 'Got unexpected exception code');
 			return;
@@ -127,10 +129,10 @@ class MysqlAdapterTest extends PHPUnit_Framework_TestCase
 	 */
 	public function testSaveFileValidation()
 	{
-		$adapter = new MogileFS_File_Mapper_Adapter_Mysql();
+		$adapter = new Mysql();
 		try {
 			$adapter->saveFile(null, '');
-		} catch (MogileFS_Exception $exc) {
+		} catch (Exception $exc) {
 			$this->assertLessThan(200, $exc->getCode(), 'Got unexpected exception code');
 			$this->assertGreaterThanOrEqual(100, $exc->getCode(), 'Got unexpected exception code');
 			return;
@@ -144,10 +146,10 @@ class MysqlAdapterTest extends PHPUnit_Framework_TestCase
 	 */
 	public function testFindFileValidation()
 	{
-		$adapter = new MogileFS_File_Mapper_Adapter_Mysql();
+		$adapter = new Mysql();
 		try {
 			$adapter->findPaths('adsf');
-		} catch (MogileFS_Exception $exc) {
+		} catch (Exception $exc) {
 			$this->assertLessThan(200, $exc->getCode(), 'Got unexpected exception code');
 			$this->assertGreaterThanOrEqual(100, $exc->getCode(), 'Got unexpected exception code');
 			return;
@@ -161,10 +163,10 @@ class MysqlAdapterTest extends PHPUnit_Framework_TestCase
 	 */
 	public function testFindInfoValidation()
 	{
-		$adapter = new MogileFS_File_Mapper_Adapter_Mysql();
+		$adapter = new Mysql();
 		try {
 			$adapter->findInfo('adsf');
-		} catch (MogileFS_Exception $exc) {
+		} catch (Exception $exc) {
 			$this->assertLessThan(200, $exc->getCode(), 'Got unexpected exception code');
 			$this->assertGreaterThanOrEqual(100, $exc->getCode(), 'Got unexpected exception code');
 			return;
@@ -178,10 +180,10 @@ class MysqlAdapterTest extends PHPUnit_Framework_TestCase
 	 */
 	public function testListKeysValidation()
 	{
-		$adapter = new MogileFS_File_Mapper_Adapter_Mysql();
+		$adapter = new Mysql();
 		try {
 			$adapter->listKeys('adsf', 'asdf2');
-		} catch (MogileFS_Exception $exc) {
+		} catch (Exception $exc) {
 			$this->assertLessThan(200, $exc->getCode(), 'Got unexpected exception code');
 			$this->assertGreaterThanOrEqual(100, $exc->getCode(), 'Got unexpected exception code');
 			return;
@@ -195,10 +197,10 @@ class MysqlAdapterTest extends PHPUnit_Framework_TestCase
 	 */
 	public function testRenameFileValidation()
 	{
-		$adapter = new MogileFS_File_Mapper_Adapter_Mysql();
+		$adapter = new Mysql();
 		try {
 			$adapter->rename('adsf', 'asdf2');
-		} catch (MogileFS_Exception $exc) {
+		} catch (Exception $exc) {
 			$this->assertLessThan(200, $exc->getCode(), 'Got unexpected exception code');
 			$this->assertGreaterThanOrEqual(100, $exc->getCode(), 'Got unexpected exception code');
 			return;
@@ -212,10 +214,10 @@ class MysqlAdapterTest extends PHPUnit_Framework_TestCase
 	 */
 	public function testDeleteFileValidation()
 	{
-		$adapter = new MogileFS_File_Mapper_Adapter_Mysql();
+		$adapter = new Mysql();
 		try {
 			$adapter->delete('adsf');
-		} catch (MogileFS_Exception $exc) {
+		} catch (Exception $exc) {
 			$this->assertLessThan(200, $exc->getCode(), 'Got unexpected exception code');
 			$this->assertGreaterThanOrEqual(100, $exc->getCode(), 'Got unexpected exception code');
 			return;
@@ -229,12 +231,12 @@ class MysqlAdapterTest extends PHPUnit_Framework_TestCase
 	 */
 	public function testFetchAllPathsFileValidation()
 	{
-		$adapter = new MogileFS_File_Mapper_Adapter_Mysql();
+		$adapter = new Mysql();
 		try {
 			$adapter->fetchAllPaths(array(
 						'arsf'
 					));
-		} catch (MogileFS_Exception $exc) {
+		} catch (Exception $exc) {
 			$this->assertLessThan(200, $exc->getCode(), 'Got unexpected exception code');
 			$this->assertGreaterThanOrEqual(100, $exc->getCode(), 'Got unexpected exception code');
 			return;
