@@ -1,4 +1,6 @@
 <?php
+namespace MogileFS\File\Mapper\Adapter;
+use MogileFS\Exception;
 /**
  *
  * Test adapter for MogileFS
@@ -6,22 +8,19 @@
  * @package MogileFS
  *
  */
-class MogileFS_File_Mapper_Adapter_Test extends MogileFS_File_Mapper_Adapter_Abstract
+class Test extends Base
 {
 	protected $_saveResult = array();
 
-	public function findPaths($key)
-	{
+	public function findPaths($key) {
 		return isset($this->_saveResult[$key]['paths']) ? $this->_saveResult[$key]['paths'] : null;
 	}
 
-	public function findInfo($key)
-	{
+	public function findInfo($key) {
 		return isset($this->_saveResult[$key]) ? $this->_saveResult[$key] : null;
 	}
 
-	public function fetchAllPaths(array $keys)
-	{
+	public function fetchAllPaths(array $keys) {
 		$result = array();
 		foreach ($keys as $key) {
 			$paths = $this->findPaths($key);
@@ -32,14 +31,12 @@ class MogileFS_File_Mapper_Adapter_Test extends MogileFS_File_Mapper_Adapter_Abs
 		return $result;
 	}
 
-	public function saveFile($key, $file, $class = null)
-	{
+	public function saveFile($key, $file, $class = null) {
 		$options = $this->getOptions();
 		if (!isset($options['domain'])) {
-			require_once 'MogileFS/Exception.php';
-			throw new MogileFS_Exception(
+			throw new Exception(
 					__METHOD__ . ' Mandatory option \'domain\' missing from options',
-					MogileFS_Exception::MISSING_OPTION);
+					Exception::MISSING_OPTION);
 		}
 
 		$fid = rand(0, 1000);
@@ -57,8 +54,7 @@ class MogileFS_File_Mapper_Adapter_Test extends MogileFS_File_Mapper_Adapter_Abs
 		return $this->_saveResult[$key];
 	}
 
-	public function rename($fromKey, $toKey)
-	{
+	public function rename($fromKey, $toKey) {
 		if (isset($this->_saveResult[$fromKey])) {
 			$this->_saveResult[$toKey] = $this->_saveResult[$fromKey];
 			unset($this->_saveResult[$fromKey]);
@@ -66,8 +62,7 @@ class MogileFS_File_Mapper_Adapter_Test extends MogileFS_File_Mapper_Adapter_Abs
 		return;
 	}
 
-	public function delete($key)
-	{
+	public function delete($key) {
 		if (isset($this->_saveResult[$key])) {
 			unset($this->_saveResult[$key]);
 		}

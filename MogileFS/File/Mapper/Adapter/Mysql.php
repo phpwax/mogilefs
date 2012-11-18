@@ -1,4 +1,7 @@
 <?php
+namespace MogileFS\File\Mapper\Adapter;
+use MogileFS\Exception;
+
 /**
  * 
  * Mysql adapter for MogileFS. This is a hack to do bulk operations for paths.
@@ -7,36 +10,30 @@
  * @package MogileFS
  *
  */
-class MogileFS_File_Mapper_Adapter_Mysql extends MogileFS_File_Mapper_Adapter_Abstract
+class Mysql extends Base
 {
 	protected $_hostsUp;
 	protected $_mysql;
 
-	public function findPaths($key)
-	{
-		require_once 'MogileFS/Exception.php';
-		throw new MogileFS_Exception(__METHOD__ . ' Not supported',
-				MogileFS_Exception::UNSUPPORTED_METHOD);
+	public function findPaths($key) {
+		throw new Exception(__METHOD__ . ' Not supported',
+				Exception::UNSUPPORTED_METHOD);
 	}
 
-	public function findInfo($key)
-	{
-		require_once 'MogileFS/Exception.php';
-		throw new MogileFS_Exception(__METHOD__ . ' Not supported',
-				MogileFS_Exception::UNSUPPORTED_METHOD);
+	public function findInfo($key) {
+		throw new Exception(__METHOD__ . ' Not supported',
+				Exception::UNSUPPORTED_METHOD);
 	}
 
-	public function fetchAllPaths(array $keys)
-	{
+	public function fetchAllPaths(array $keys) {
 		if (empty($keys)) {
 			return array();
 		}
 		
 		$options = $this->getOptions();
 		if (!isset($options['domain'])) {
-			require_once 'MogileFS/Exception.php';
-			throw new MogileFS_Exception(__METHOD__ . ' No \'domain\' option found in config',
-					MogileFS_Exception::INVALID_CONFIGURATION);
+			throw new Exception(__METHOD__ . ' No \'domain\' option found in config',
+					Exception::INVALID_CONFIGURATION);
 		}
 
 		$hosts = $this->getHostsUp();
@@ -67,8 +64,8 @@ class MogileFS_File_Mapper_Adapter_Mysql extends MogileFS_File_Mapper_Adapter_Ab
 		$result = $stm->execute($parms);
 		if (!$result) {
 			$error = $stm->errorInfo();
-			throw new MogileFS_Exception(__METHOD__ . ' ' . $error[2],
-					MogileFS_Exception::READ_FAILED);
+			throw new Exception(__METHOD__ . ' ' . $error[2],
+					Exception::READ_FAILED);
 		}
 		$resultArray = $stm->fetchAll();
 
@@ -95,32 +92,24 @@ class MogileFS_File_Mapper_Adapter_Mysql extends MogileFS_File_Mapper_Adapter_Ab
 		return $paths;
 	}
 
-	public function listKeys($prefix = null, $lastKey = null, $limit = null)
-	{
-		require_once 'MogileFS/Exception.php';
-		throw new MogileFS_Exception(__METHOD__ . ' Not supported',
-				MogileFS_Exception::UNSUPPORTED_METHOD);
+	public function listKeys($prefix = null, $lastKey = null, $limit = null) {
+		throw new Exception(__METHOD__ . ' Not supported',
+				Exception::UNSUPPORTED_METHOD);
 	}
 
-	public function saveFile($key, $file, $class = null)
-	{
-		require_once 'MogileFS/Exception.php';
-		throw new MogileFS_Exception(__METHOD__ . ' Not supported',
-				MogileFS_Exception::UNSUPPORTED_METHOD);
+	public function saveFile($key, $file, $class = null) {
+		throw new Exception(__METHOD__ . ' Not supported',
+				Exception::UNSUPPORTED_METHOD);
 	}
 
-	public function rename($fromKey, $toKey)
-	{
-		require_once 'MogileFS/Exception.php';
-		throw new MogileFS_Exception(__METHOD__ . ' Not supported',
-				MogileFS_Exception::UNSUPPORTED_METHOD);
+	public function rename($fromKey, $toKey) {
+		throw new Exception(__METHOD__ . ' Not supported',
+				Exception::UNSUPPORTED_METHOD);
 	}
 
-	public function delete($key)
-	{
-		require_once 'MogileFS/Exception.php';
-		throw new MogileFS_Exception(__METHOD__ . ' Not supported',
-				MogileFS_Exception::UNSUPPORTED_METHOD);
+	public function delete($key) {
+		throw new Exception(__METHOD__ . ' Not supported',
+				Exception::UNSUPPORTED_METHOD);
 	}
 
 	/**
@@ -128,14 +117,12 @@ class MogileFS_File_Mapper_Adapter_Mysql extends MogileFS_File_Mapper_Adapter_Ab
 	 * Set id of hosts that are up
 	 * @param array $hostsUp
 	 */
-	public function setHostsUp(array $hostsUp)
-	{
+	public function setHostsUp(array $hostsUp) {
 		$this->_hostsUp = $hostsUp;
 		return $this;
 	}
 
-	public function getHostsUp()
-	{
+	public function getHostsUp() {
 		if (null == $this->_hostsUp) {
 
 			$hostsUp = array();
@@ -146,8 +133,8 @@ class MogileFS_File_Mapper_Adapter_Mysql extends MogileFS_File_Mapper_Adapter_Ab
 			$result = $stm->execute();
 			if (!$result) {
 				$error = $stm->errorInfo();
-				throw new MogileFS_Exception(__METHOD__ . ' ' . $error[2],
-						MogileFS_Exception::READ_FAILED);
+				throw new Exception(__METHOD__ . ' ' . $error[2],
+						Exception::READ_FAILED);
 			}
 			$hosts = $stm->fetchAll();
 
@@ -200,10 +187,10 @@ class MogileFS_File_Mapper_Adapter_Mysql extends MogileFS_File_Mapper_Adapter_Ab
 			curl_multi_close($mh);
 
 			if (empty($hostsUp)) {
-				throw new MogileFS_Exception(
+				throw new Exception(
 						__METHOD__ . ' No server responsed within ' . $maxRunTime
 								. ' seconds. Tried: ' . implode(',', $serversTried),
-						MogileFS_Exception::READ_FAILED);
+						Exception::READ_FAILED);
 			}
 
 			$this->_hostsUp = $hostsUp;
@@ -211,37 +198,33 @@ class MogileFS_File_Mapper_Adapter_Mysql extends MogileFS_File_Mapper_Adapter_Ab
 		return $this->_hostsUp;
 	}
 
-	public function getMysql()
-	{
-		if ($this->_mysql instanceof PDO) {
+	public function getMysql() {
+		if ($this->_mysql instanceof \PDO) {
 			return $this->_mysql;
 		}
 
 		$options = $this->getOptions();
 
 		if (!isset($options['pdo_options'])) {
-			require_once 'MogileFS/Exception.php';
-			throw new MogileFS_Exception(
+			throw new Exception(
 					__METHOD__
 							. ' No mysql client set, and no \'pdo_options\' option found in config',
-					MogileFS_Exception::INVALID_CONFIGURATION);
+					Exception::INVALID_CONFIGURATION);
 		}
 
 		if (!isset($options['username'])) {
-			require_once 'MogileFS/Exception.php';
-			throw new MogileFS_Exception(
+			throw new Exception(
 					__METHOD__ . ' No mysql client set, and no \'username\' option found in config',
-					MogileFS_Exception::INVALID_CONFIGURATION);
+					Exception::INVALID_CONFIGURATION);
 		}
 
 		if (!isset($options['password'])) {
-			require_once 'MogileFS/Exception.php';
-			throw new MogileFS_Exception(
+			throw new Exception(
 					__METHOD__ . ' No mysql client set, and no \'password\' option found in config',
-					MogileFS_Exception::INVALID_CONFIGURATION);
+					Exception::INVALID_CONFIGURATION);
 		}
 
-		$this->_mysql = new PDO('mysql:' . $options['pdo_options'], $options['username'],
+		$this->_mysql = new \PDO('mysql:' . $options['pdo_options'], $options['username'],
 				$options['password']);
 
 		return $this->_mysql;

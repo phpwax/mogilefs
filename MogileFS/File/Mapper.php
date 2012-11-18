@@ -1,13 +1,21 @@
 <?php
+namespace MogileFS\File;
+
+use MogileFS\File;
+use MogileFS\Exception;
+use MogileFS\File\Mapper\Adapter\Base;
+use MogileFS\File\Mapper\Adapter\Tracker;
+use MogileFS\File\Mapper\Adapter\Test;
+
 /**
  * 
  * Mapper for MogileFS_File which populates file model with properties returned from adapters
  * @author Jon Skarpeteig <jon.skarpeteig@gmail.com>
+ * @author Ross Riley <ross@oneblackbear.com>
  * @package MogileFS
  *
  */
-class MogileFS_File_Mapper
-{
+class Mapper {
 	/**
 	 * 
 	 * Configuration options for mapper
@@ -40,7 +48,7 @@ class MogileFS_File_Mapper
 		return $this->_options;
 	}
 
-	public function setAdapter(MogileFS_File_Mapper_Adapter_Abstract $adapter)
+	public function setAdapter(Base $adapter)
 	{
 		$this->_adapter = $adapter;
 		return $this;
@@ -48,25 +56,23 @@ class MogileFS_File_Mapper
 
 	public function getAdapter()
 	{
-		if (!$this->_adapter instanceof MogileFS_File_Mapper_Adapter_Abstract) {
+		if (!$this->_adapter instanceof Base) {
 			$options = $this->getOptions();
 			if (!isset($options['adapter'])) {
-				require_once 'MogileFS/Exception.php';
-				throw new MogileFS_Exception(
+				throw new Exception(
 						__METHOD__
 								. ' No adapter set, and no \'adapter\' section with adapter options found',
-						MogileFS_Exception::MISSING_OPTION);
+						Exception::MISSING_OPTION);
 			}
 
-			if ($options['adapter'] instanceof MogileFS_File_Mapper_Adapter_Abstract) {
+			if ($options['adapter'] instanceof Base) {
 				$this->setAdapter($options['adapter']);
 				return $this->_adapter;
 			}
 			
-			$default = (isset($options['defaultadapter'])) ? $options['defaultadapter'] : 'MogileFS_File_Mapper_Adapter_Tracker';
+			$default = (isset($options['defaultadapter'])) ? $options['defaultadapter'] : 'Tracker';
 
 			$adapterFile = str_replace('_', '/', $default).'.php';
-			require_once $adapterFile;
 			$this->setAdapter(new $default($options['adapter']));
 		}
 		return $this->_adapter;
@@ -74,8 +80,7 @@ class MogileFS_File_Mapper
 
 	public function find($key, $eagerLoad = false)
 	{
-		require_once 'MogileFS/File.php';
-		$file = new MogileFS_File();
+		$file = new File();
 		$file->setKey($key);
 		$file->setMapper($this);
 
@@ -95,7 +100,7 @@ class MogileFS_File_Mapper
 		return $file;
 	}
 
-	public function findInfo(MogileFS_File $file)
+	public function findInfo(File $file)
 	{
 		$info = $this->getAdapter()->findInfo($file->getKey());
 		if (null == $info) {
@@ -113,7 +118,7 @@ class MogileFS_File_Mapper
 			return null;
 		}
 		foreach ($paths as $key => $pathArray) {
-			$file = new MogileFS_File(array(
+			$file = new File(array(
 				'key' => $key,
 				'paths' => $pathArray
 			));
@@ -130,14 +135,14 @@ class MogileFS_File_Mapper
 	 * 
 	 * Download file from MogileFS into a local temp file
 	 * @param MogileFS_File $file
-	 * @throws MogileFS_Exception
+	 * @throws Exception
 	 */
-	public function fetchFile(MogileFS_File $file)
+	public function fetchFile(File $file)
 	{
 		if (!$file->isValid()) {
-			throw new MogileFS_Exception(
+			throw new Exception(
 					__METHOD__ . ' Cannot fetch file from invalid file model',
-					MogileFS_Exception::INVALID_ARGUMENT);
+					Exception::INVALID_ARGUMENT);
 		}
 
 		$localFile = sys_get_temp_dir() . DIRECTORY_SEPARATOR . $file->getKey();
@@ -160,14 +165,14 @@ class MogileFS_File_Mapper
 	 * Uploads file to MogileFS, and populate model with
 	 * returned values (such as fid)
 	 * @param MogileFS_File $file
-	 * @throws MogileFS_Exception
+	 * @throws Exception
 	 * @return MogileFS_File stored in MogileFS
 	 */
-	public function save(MogileFS_File $file)
+	public function save(File $file)
 	{
 		if (!$file->isValid()) {
-			throw new MogileFS_Exception(__METHOD__ . ' Cannot save invalid file model',
-					MogileFS_Exception::INVALID_ARGUMENT);
+			throw new Exception(__METHOD__ . ' Cannot save invalid file model',
+					Exception::INVALID_ARGUMENT);
 		}
 		
 		$file->setMapper($this);

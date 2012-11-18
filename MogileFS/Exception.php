@@ -1,4 +1,5 @@
 <?php
+namespace MogileFS;
 /**
  * 
  * Extended Exception to include error codes
@@ -6,7 +7,7 @@
  * @package MogileFS
  *
  */
-class MogileFS_Exception extends Exception
+class Exception extends \Exception
 {
 	const EMPTY_ARGUMENT = 100;
 	const INVALID_ARGUMENT = 101;
