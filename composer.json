@@ -1,0 +1,25 @@
+{
+    "name": "phpwax/mogilefs",
+    "type": "library",
+    "description": "MogileFS Component",
+    "keywords": [],
+    "homepage": "http://php-wax.com",
+    "license": "MIT",
+    "authors": [
+        {"name": "Jon Skarpeteig","email": "jon.skarpeteig@gmail.com"}
+        {"name": "Ross Riley","email": "ross@oneblackbear.com"},
+    ],
+    "require": {
+        "php": ">=5.3.3"
+    },
+    "autoload": {
+        "psr-0": { "MogileFS": "" }
+    },
+    "minimum-stability": "dev",
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.0.x-dev"
+        }
+    },
+    "target-dir": "MogileFS"
+}
