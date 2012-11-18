@@ -1,6 +1,9 @@
 <?php
-require_once 'MogileFS/File.php';
-require_once 'MogileFS/File/Mapper.php';
+use MogileFS\File;
+use MogileFS\Exception;
+use MogileFS\File\Mapper;
+
+
 /**
  *
  * Test MogileFS_File model
@@ -24,26 +27,26 @@ class FileTest extends PHPUnit_Framework_TestCase
 
 	public function testSettersAndGetters()
 	{
-		$file = new MogileFS_File();
-		$this->assertInstanceOf('MogileFS_File', $file->setClass('dev'));
-		$this->assertInstanceOf('MogileFS_File', $file->setDomain('toast'));
-		$this->assertInstanceOf('MogileFS_File', $file->setFid(123));
-		$this->assertInstanceOf('MogileFS_File', $file->setFile($this->getTestFile()));
-		$this->assertInstanceOf('MogileFS_File', $file->setKey('key'));
-		$this->assertInstanceOf('MogileFS_File', $file->setMapper(new MogileFS_File_Mapper()));
+		$file = new File();
+		$this->assertInstanceOf('MogileFS\File', $file->setClass('dev'));
+		$this->assertInstanceOf('MogileFS\File', $file->setDomain('toast'));
+		$this->assertInstanceOf('MogileFS\File', $file->setFid(123));
+		$this->assertInstanceOf('MogileFS\File', $file->setFile($this->getTestFile()));
+		$this->assertInstanceOf('MogileFS\File', $file->setKey('key'));
+		$this->assertInstanceOf('MogileFS\File', $file->setMapper(new Mapper()));
 		$this
-				->assertInstanceOf('MogileFS_File',
+				->assertInstanceOf('MogileFS\File',
 						$file->setPaths(array(
 									'http://mypath.com/123.fid'
 								)));
-		$this->assertInstanceOf('MogileFS_File', $file->setSize(321));
+		$this->assertInstanceOf('MogileFS\File', $file->setSize(321));
 
 		$this->assertEquals('dev', $file->getClass());
 		$this->assertEquals('toast', $file->getDomain());
 		$this->assertEquals(123, $file->getFid());
 		$this->assertEquals($this->getTestFile(), $file->getFile());
 		$this->assertEquals('key', $file->getKey());
-		$this->assertEquals(new MogileFS_File_Mapper(), $file->getMapper());
+		$this->assertEquals(new Mapper(), $file->getMapper());
 		$this->assertEquals(array(
 					'http://mypath.com/123.fid'
 				), $file->getPaths());
@@ -52,7 +55,7 @@ class FileTest extends PHPUnit_Framework_TestCase
 
 	public function testIsValid()
 	{
-		$file = new MogileFS_File();
+		$file = new File();
 		$this->assertFalse($file->isValid(), 'File without any values cannot be valid');
 
 		$file->setKey('key');
@@ -74,7 +77,7 @@ class FileTest extends PHPUnit_Framework_TestCase
 				),
 				'size' => 321
 		);
-		$file = new MogileFS_File($fileArray);
+		$file = new File($fileArray);
 		$this->assertEquals($fileArray, $file->toArray());
 	}
 	
@@ -84,10 +87,10 @@ class FileTest extends PHPUnit_Framework_TestCase
 	*/
 	public function testFileValidation()
 	{
-		$file = new MogileFS_File();
+		$file = new File();
 		try {
 			$file->setFile('/tmp/me_n0_ex1st'); // Not valid value
-		} catch (MogileFS_Exception $exc) {
+		} catch (Exception $exc) {
 			$this->assertLessThan(200, $exc->getCode(), 'Got unexpected exception code');
 			$this->assertGreaterThanOrEqual(100, $exc->getCode(), 'Got unexpected exception code');
 			return;

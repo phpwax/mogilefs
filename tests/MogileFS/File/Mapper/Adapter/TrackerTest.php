@@ -1,7 +1,8 @@
 <?php
-require_once 'MogileFS/File.php';
-require_once 'MogileFS/File/Mapper/Adapter/Abstract.php';
-require_once 'MogileFS/File/Mapper/Adapter/Tracker.php';
+use MogileFS\Exception;
+use MogileFS\File\Mapper\Adapter\Base;
+use MogileFS\File\Mapper\Adapter\Tracker;
+
 /**
  * 
  * Test case for tracker (native) adapter
@@ -20,7 +21,7 @@ class TrackerTest extends PHPUnit_Framework_TestCase
 	{
 		$this->_configFile = realpath(dirname(__FILE__) . '/../../../config.php');
 		$config = include $this->_configFile;
-		$this->_tracker = new MogileFS_File_Mapper_Adapter_Tracker($config['tracker']);
+		$this->_tracker = new Tracker($config['tracker']);
 	}
 
 	public function testSaveAndDelete()
@@ -58,7 +59,7 @@ class TrackerTest extends PHPUnit_Framework_TestCase
 		$this->_tracker->saveFile($key, $this->_configFile);
 		try {
 			$this->_tracker->rename($key, $key2);
-		} catch (MogileFS_Exception $e) {
+		} catch (Exception $e) {
 			// Clean up test data on failiure
 			$this->_tracker->delete($key);
 			throw $e;
@@ -96,10 +97,10 @@ class TrackerTest extends PHPUnit_Framework_TestCase
 	 */
 	public function testFindPathsValidation()
 	{
-		$adapter = new MogileFS_File_Mapper_Adapter_Tracker();
+		$adapter = new Tracker();
 		try {
 			$adapter->findPaths(new Exception()); // Not valid value
-		} catch (MogileFS_Exception $exc) {
+		} catch (Exception $exc) {
 			$this->assertLessThan(200, $exc->getCode(), 'Got unexpected exception code');
 			$this->assertGreaterThanOrEqual(100, $exc->getCode(), 'Got unexpected exception code');
 			return;
@@ -113,12 +114,12 @@ class TrackerTest extends PHPUnit_Framework_TestCase
 	 */
 	public function testFetchAllPathsValidation()
 	{
-		$adapter = new MogileFS_File_Mapper_Adapter_Tracker();
+		$adapter = new Tracker();
 		try {
 			$adapter->fetchAllPaths(array(
 						new Exception('')
 					)); // Not valid value
-		} catch (MogileFS_Exception $exc) {
+		} catch (Exception $exc) {
 			$this->assertLessThan(200, $exc->getCode(), 'Got unexpected exception code');
 			$this->assertGreaterThanOrEqual(100, $exc->getCode(), 'Got unexpected exception code');
 			return;
@@ -132,10 +133,10 @@ class TrackerTest extends PHPUnit_Framework_TestCase
 	 */
 	public function testFindInfoValidation()
 	{
-		$adapter = new MogileFS_File_Mapper_Adapter_Tracker();
+		$adapter = new Tracker();
 		try {
 			$adapter->findInfo(new Exception('')); // Not valid value
-		} catch (MogileFS_Exception $exc) {
+		} catch (Exception $exc) {
 			$this->assertLessThan(200, $exc->getCode(), 'Got unexpected exception code');
 			$this->assertGreaterThanOrEqual(100, $exc->getCode(), 'Got unexpected exception code');
 			return;
@@ -149,10 +150,10 @@ class TrackerTest extends PHPUnit_Framework_TestCase
 	 */
 	public function testDeleteValidation()
 	{
-		$adapter = new MogileFS_File_Mapper_Adapter_Tracker();
+		$adapter = new Tracker();
 		try {
 			$adapter->delete(null); // Not valid value
-		} catch (MogileFS_Exception $exc) {
+		} catch (Exception $exc) {
 			$this->assertLessThan(200, $exc->getCode(), 'Got unexpected exception code');
 			$this->assertGreaterThanOrEqual(100, $exc->getCode(), 'Got unexpected exception code');
 			return;
@@ -166,10 +167,10 @@ class TrackerTest extends PHPUnit_Framework_TestCase
 	 */
 	public function testRenameValidation()
 	{
-		$adapter = new MogileFS_File_Mapper_Adapter_Tracker();
+		$adapter = new Tracker();
 		try {
 			$adapter->rename(null, 'asdf'); // Not valid value
-		} catch (MogileFS_Exception $exc) {
+		} catch (Exception $exc) {
 			$this->assertLessThan(200, $exc->getCode(), 'Got unexpected exception code');
 			$this->assertGreaterThanOrEqual(100, $exc->getCode(), 'Got unexpected exception code');
 			return;
@@ -183,10 +184,10 @@ class TrackerTest extends PHPUnit_Framework_TestCase
 	 */
 	public function testRename2Validation()
 	{
-		$adapter = new MogileFS_File_Mapper_Adapter_Tracker();
+		$adapter = new Tracker();
 		try {
 			$adapter->rename('asdf', null); // Not valid value
-		} catch (MogileFS_Exception $exc) {
+		} catch (Exception $exc) {
 			$this->assertLessThan(200, $exc->getCode(), 'Got unexpected exception code');
 			$this->assertGreaterThanOrEqual(100, $exc->getCode(), 'Got unexpected exception code');
 			return;
@@ -200,10 +201,10 @@ class TrackerTest extends PHPUnit_Framework_TestCase
 	*/
 	public function testSaveFileValidation()
 	{
-		$adapter = new MogileFS_File_Mapper_Adapter_Tracker();
+		$adapter = new Tracker();
 		try {
 			$adapter->saveFile(null, ''); // Not valid value
-		} catch (MogileFS_Exception $exc) {
+		} catch (Exception $exc) {
 			$this->assertLessThan(200, $exc->getCode(), 'Got unexpected exception code');
 			$this->assertGreaterThanOrEqual(100, $exc->getCode(), 'Got unexpected exception code');
 			return;
@@ -217,10 +218,10 @@ class TrackerTest extends PHPUnit_Framework_TestCase
 	*/
 	public function testSaveFile2Validation()
 	{
-		$adapter = new MogileFS_File_Mapper_Adapter_Tracker();
+		$adapter = new Tracker();
 		try {
 			$adapter->saveFile('key', '/tmp/me_N0_exist'); // Not valid value
-		} catch (MogileFS_Exception $exc) {
+		} catch (Exception $exc) {
 			$this->assertLessThan(200, $exc->getCode(), 'Got unexpected exception code');
 			$this->assertGreaterThanOrEqual(100, $exc->getCode(), 'Got unexpected exception code');
 			return;

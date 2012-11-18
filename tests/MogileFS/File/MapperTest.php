@@ -1,8 +1,10 @@
 <?php
-require_once 'MogileFS/File.php';
-require_once 'MogileFS/File/Mapper.php';
-require_once 'MogileFS/File/Mapper/Adapter/Abstract.php';
-require_once 'MogileFS/File/Mapper/Adapter/Test.php';
+use MogileFS\File;
+use MogileFS\Exception;
+use MogileFS\File\Mapper;
+use MogileFS\File\Mapper\Adapter\Base;
+use MogileFS\File\Mapper\Adapter\Test;
+
 /**
  *
  * Test MogileFS_File_Mapper functions
@@ -19,14 +21,14 @@ class MapperTest extends PHPUnit_Framework_TestCase
 
 	public function setUp()
 	{
-		$this->_testAdapter = new MogileFS_File_Mapper_Adapter_Test(
+		$this->_testAdapter = new Test(
 				array(
 					'domain' => 'toast'
 				));
 
-		$this->_testFile = new MogileFS_File(
+		$this->_testFile = new File(
 				array(
-					'key' => $this->_key, 'file' => '/etc/motd'
+					'key' => $this->_key, 'file' => __DIR__.'/../../example.txt'
 				));
 
 		parent::setUp();
@@ -34,11 +36,11 @@ class MapperTest extends PHPUnit_Framework_TestCase
 
 	public function testSaveAndDelete()
 	{
-		$mapper = new MogileFS_File_Mapper(array(
+		$mapper = new Mapper(array(
 			'adapter' => $this->_testAdapter
 		));
 		$savedFile = $mapper->save($this->_testFile);
-		$this->assertInstanceOf('MogileFS_File', $savedFile);
+		$this->assertInstanceOf('MogileFS\File', $savedFile);
 		$this->assertNotNull($savedFile->getFid());
 		$this->assertEquals('default', $savedFile->getClass());
 		$this->assertEquals('toast', $savedFile->getDomain());
@@ -51,7 +53,7 @@ class MapperTest extends PHPUnit_Framework_TestCase
 
 	public function testFindAndFetchAll()
 	{
-		$mapper = new MogileFS_File_Mapper(array(
+		$mapper = new Mapper(array(
 			'adapter' => $this->_testAdapter
 		));
 		$savedFile = $mapper->save($this->_testFile);
@@ -59,7 +61,7 @@ class MapperTest extends PHPUnit_Framework_TestCase
 		$key = $this->_testFile->getKey();
 
 		$file = $mapper->find($key);
-		$this->assertInstanceOf('MogileFS_File', $file);
+		$this->assertInstanceOf('MogileFS\File', $file);
 		$this->assertEquals('toast', $file->getDomain());
 
 		$file = clone $this->_testFile;
@@ -84,7 +86,7 @@ class MapperTest extends PHPUnit_Framework_TestCase
 	
 	public function testFileLazyloader()
 	{
-		$mapper = new MogileFS_File_Mapper(array(
+		$mapper = new Mapper(array(
 					'adapter' => $this->_testAdapter
 		));
 		$savedFile = $mapper->save($this->_testFile);
@@ -98,33 +100,33 @@ class MapperTest extends PHPUnit_Framework_TestCase
 	{
 		$this->_testFile->setPaths(array('http://127.0.0.1'));
 		
-		$mapper = new MogileFS_File_Mapper();
+		$mapper = new Mapper();
 		$this->_testFile->setMapper($mapper);
 		$this->assertFileExists($this->_testFile->getFile(true));
 	}
 	
 	public function testGetAdapter()
 	{
-		$mapper = new MogileFS_File_Mapper(
+		$mapper = new Mapper(
 				array(
-					'defaultadapter' => 'MogileFS_File_Mapper_Adapter_Test', 'adapter' => array()
+					'defaultadapter' => 'MogileFS\File\Mapper\Adapter\Test', 'adapter' => array()
 				));
 
-		$this->assertInstanceOf('MogileFS_File_Mapper_Adapter_Test', $mapper->getAdapter());
+		$this->assertInstanceOf('MogileFS\File\Mapper\Adapter\Test', $mapper->getAdapter());
 
 		/**
 		 * Argument validation test
 		 * Expecting MogileFS_Exception with 1XX code
 		 */
-		$mapper = new MogileFS_File_Mapper();
+		$mapper = new Mapper();
 		try {
 			$mapper->getAdapter(); // No adapter set
-		} catch (MogileFS_Exception $exc) {
+		} catch (Exception $exc) {
 			$this->assertLessThan(200, $exc->getCode(), 'Got unexpected exception code');
 			$this->assertGreaterThanOrEqual(100, $exc->getCode(), 'Got unexpected exception code');
 			return;
 		}
-		$this->fail('Did not get MogileFS_Exception exception');
+		$this->fail('Did not get MogileFS\Exception exception');
 	}
 
 
@@ -134,12 +136,12 @@ class MapperTest extends PHPUnit_Framework_TestCase
 	*/
 	public function testSaveInvalidFile()
 	{
-		$mapper = new MogileFS_File_Mapper(array(
-					'defaultadapter' => 'MogileFS_File_Mapper_Adapter_Test', 'adapter' => array()
+		$mapper = new Mapper(array(
+					'defaultadapter' => 'MogileFS\File\Mapper\Adapter\Test', 'adapter' => array()
 				));
 		try {
-			$mapper->save(new MogileFS_File()); // Invalid file
-		} catch (MogileFS_Exception $exc) {
+			$mapper->save(new File()); // Invalid file
+		} catch (Exception $exc) {
 			$this->assertLessThan(200, $exc->getCode(), 'Got unexpected exception code');
 			$this->assertGreaterThanOrEqual(100, $exc->getCode(), 'Got unexpected exception code');
 			return;
@@ -153,10 +155,10 @@ class MapperTest extends PHPUnit_Framework_TestCase
 	*/
 	public function testFetchFileValidation()
 	{
-		$mapper = new MogileFS_File_Mapper();
+		$mapper = new Mapper();
 		try {
-			$mapper->fetchFile(new MogileFS_File()); // Invalid file
-		} catch (MogileFS_Exception $exc) {
+			$mapper->fetchFile(new File()); // Invalid file
+		} catch (Exception $exc) {
 			$this->assertLessThan(200, $exc->getCode(), 'Got unexpected exception code');
 			$this->assertGreaterThanOrEqual(100, $exc->getCode(), 'Got unexpected exception code');
 			return;
