@@ -17,17 +17,22 @@ class TrackerTest extends PHPUnit_Framework_TestCase
 	protected $_configFile;
 	protected $_tracker;
 
-	public function setUp()
-	{
-		$this->_configFile = realpath(dirname(__FILE__) . '/../../../config.php');
-		$config = include $this->_configFile;
-		$this->_tracker = new Tracker($config['tracker']);
+	public function setUp() {
+    $this->test_file = realpath(__DIR__.'/../../../../example.txt');
+    $config = [
+      "domain"  => $GLOBALS["tracker_name"],
+      "tracker" => [$GLOBALS["tracker_host"]],
+			'noverify' => $GLOBALS["tracker_noverify"],
+			'pathcount' => $GLOBALS["tracker_pathcount"],
+      'request_timeout'=>$GLOBALS["tracker_timeout"]
+    ];
+
+		$this->_tracker = new Tracker($config);
 	}
 
-	public function testSaveAndDelete()
-	{
+	public function testSaveAndDelete() {
 		$key = 'testFile';
-		$result = $this->_tracker->saveFile($key, $this->_configFile, 'dev');
+		$result = $this->_tracker->saveFile($key, $this->test_file, 'dev');
 		$this->assertArrayHasKey('paths', $result);
 		$this->assertArrayHasKey('fid', $result);
 		$this->assertArrayHasKey('key', $result);
@@ -40,7 +45,7 @@ class TrackerTest extends PHPUnit_Framework_TestCase
 	public function testFindInfo()
 	{
 		$key = 'testFile';
-		$this->_tracker->saveFile($key, $this->_configFile);
+		$this->_tracker->saveFile($key, $this->test_file);
 		$info = $this->_tracker->findInfo($key);
 		$this->assertArrayHasKey('fid', $info);
 		$this->assertArrayHasKey('class', $info);
@@ -56,7 +61,7 @@ class TrackerTest extends PHPUnit_Framework_TestCase
 	{
 		$key = 'testFile';
 		$key2 = 'testFile2';
-		$this->_tracker->saveFile($key, $this->_configFile);
+		$this->_tracker->saveFile($key, $this->test_file);
 		try {
 			$this->_tracker->rename($key, $key2);
 		} catch (Exception $e) {
@@ -75,9 +80,9 @@ class TrackerTest extends PHPUnit_Framework_TestCase
 	public function testFetchAllPaths()
 	{
 		$key = 'testFile';
-		$this->_tracker->saveFile($key, $this->_configFile);
+		$this->_tracker->saveFile($key, $this->test_file);
 		$key2 = 'testFile2';
-		$this->_tracker->saveFile($key2, $this->_configFile);
+		$this->_tracker->saveFile($key2, $this->test_file);
 
 		$pathsArray = $this->_tracker->fetchAllPaths(array(
 					$key, $key2

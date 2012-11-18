@@ -18,10 +18,21 @@ class MysqlAdapterTest extends PHPUnit_Framework_TestCase
 	protected $_configFile;
 	protected $_tracker;
 
-	public function setUp()
-	{
-		$this->_configFile = realpath(dirname(__FILE__) . '/../../../config.php');
-		$config = include $this->_configFile;
+	public function setUp() {
+    $this->test_file = realpath(__DIR__.'/../../../../example.txt');
+    $config['mysql']= [
+			'domain' =>      $GLOBALS["mysql_domain"],
+			'pdo_options' => $GLOBALS["mysql_pdo_options"],
+			'username' =>    $GLOBALS["mysql_username"],
+			'password' =>    $GLOBALS["mysql_password"]
+    ];
+    $config["tracker"] = [
+      "domain"  =>        $GLOBALS["tracker_name"],
+      "tracker" =>        [$GLOBALS["tracker_host"]],
+			'noverify' =>       $GLOBALS["tracker_noverify"],
+			'pathcount' =>      $GLOBALS["tracker_pathcount"],
+      'request_timeout'=> $GLOBALS["tracker_timeout"]
+    ];
 		$this->_mysqlAdapter = new Mysql($config['mysql']);
 		$this->_trackerAdapter = new Tracker($config['tracker']);
 	}
@@ -50,9 +61,9 @@ class MysqlAdapterTest extends PHPUnit_Framework_TestCase
 	public function testFetchAllPaths()
 	{
 		$key1 = 'testFile1';
-		$file1 = $this->_trackerAdapter->saveFile($key1, $this->_configFile);
+		$file1 = $this->_trackerAdapter->saveFile($key1, $this->test_file);
 		$key2 = 'testFile2';
-		$file2 = $this->_trackerAdapter->saveFile($key2, $this->_configFile);
+		$file2 = $this->_trackerAdapter->saveFile($key2, $this->test_file);
 
 		$files = $this->_mysqlAdapter->fetchAllPaths(array(
 					$key1, $key2
