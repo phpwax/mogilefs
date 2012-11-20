@@ -2,7 +2,7 @@
     "name": "phpwax/mogilefs",
     "type": "library",
     "description": "MogileFS Component",
-    "keywords": [],
+    "keywords": ["MogileFS"],
     "homepage": "http://php-wax.com",
     "license": "MIT",
     "authors": [
