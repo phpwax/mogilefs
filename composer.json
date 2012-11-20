@@ -6,8 +6,8 @@
     "homepage": "http://php-wax.com",
     "license": "MIT",
     "authors": [
-        {"name": "Jon Skarpeteig","email": "jon.skarpeteig@gmail.com"}
-        {"name": "Ross Riley","email": "ross@oneblackbear.com"},
+        {"name": "Jon Skarpeteig","email": "jon.skarpeteig@gmail.com"},
+        {"name": "Ross Riley","email": "ross@oneblackbear.com"}
     ],
     "require": {
         "php": ">=5.3.3"
