@@ -90,8 +90,7 @@ class File
 		);
 	}
 
-	public function fromArray(array $attributes)
-	{
+	public function fromArray(array $attributes) {
 		foreach ($attributes as $key => $value) {
 			switch ($key) {
 				case 'class':
@@ -124,8 +123,7 @@ class File
 	 *
 	 * @return string
 	 */
-	public function getClass($forceFetch = null)
-	{
+	public function getClass($forceFetch = null) {
 		if ((true === $forceFetch) || (null === $forceFetch && null === $this->_class)) {
 			if (!$this->getMapper() instanceof Mapper) {
 				throw new Exception(__METHOD__ . ' No mapper set',
@@ -142,39 +140,32 @@ class File
 	 * @param string $class
 	 * @return MogileFS_File Provides fluent interface
 	 */
-	public function setClass($class)
-	{
+	public function setClass($class) {
 		$this->_class = $class;
 		return $this;
 	}
 
-	public function setDomain($domain)
-	{
+	public function setDomain($domain) {
 		$this->_domain = $domain;
 		return $this;
 	}
 
-	public function getDomain($forceFetch = null)
-	{
+	public function getDomain($forceFetch = null) {
 		if ((true === $forceFetch) || (null === $forceFetch && null === $this->_domain)) {
 			if (!$this->getMapper() instanceof Mapper) {
-				throw new Exception(__METHOD__ . ' No mapper set',
-						Exception::MISSING_MAPPER);
+				throw new Exception(__METHOD__ . ' No mapper set', Exception::MISSING_MAPPER);
 			}
-			$this->getMapper()
-					->findInfo($this);
+			$this->getMapper()->findInfo($this);
 		}
 		return $this->_domain;
 	}
 
-	public function setFid($fid)
-	{
+	public function setFid($fid) {
 		$this->_fid = $fid;
 		return $this;
 	}
 
-	public function getFid()
-	{
+	public function getFid() {
 		return $this->_fid;
 	}
 
@@ -185,11 +176,9 @@ class File
 	 * @param string $file
 	 * @return MogileFS_File Provides fluent interface
 	 */
-	public function setFile($file)
-	{
+	public function setFile($file) {
 		if (!file_exists($file)) {
-			throw new Exception(__METHOD__ . ' File does not exist: ' . $file,
-					Exception::INVALID_ARGUMENT);
+			throw new Exception(__METHOD__ . ' File does not exist: ' . $file, Exception::INVALID_ARGUMENT);
 		}
 
 		$this->_file = $file;
@@ -202,15 +191,12 @@ class File
 	 * Default is to lazy load (download) file on demand
 	 * @param boolean $fetch
 	 */
-	public function getFile($fetch = null)
-	{
+	public function getFile($fetch = null) {
 		if ((true === $fetch) || (null === $fetch && !file_exists($this->_file))) {
 			if (!$this->getMapper() instanceof Mapper) {
-				throw new Exception(__METHOD__ . ' No mapper set',
-						Exception::MISSING_MAPPER);
+				throw new Exception(__METHOD__ . ' No mapper set', Exception::MISSING_MAPPER);
 			}
-			$this->getMapper()
-					->fetchFile($this);
+			$this->getMapper()->fetchFile($this);
 		}
 		return $this->_file;
 	}
@@ -219,8 +205,7 @@ class File
 	 * 
 	 * @return string
 	 */
-	public function getKey()
-	{
+	public function getKey() {
 		return $this->_key;
 	}
 
@@ -229,8 +214,7 @@ class File
 	 * @param string $key
 	 * @return MogileFS_File Provides fluent interface
 	 */
-	public function setKey($key)
-	{
+	public function setKey($key) {
 		$this->_key = $key;
 		return $this;
 	}
@@ -239,8 +223,7 @@ class File
 	 * 
 	 * @return array
 	 */
-	public function getPaths()
-	{
+	public function getPaths() {
 		return $this->_paths;
 	}
 
@@ -249,20 +232,17 @@ class File
 	 * @param array $paths
 	 * @return MogileFS_File Provides fluent interface
 	 */
-	public function setPaths(array $paths)
-	{
+	public function setPaths(array $paths) {
 		$this->_paths = $paths;
 		return $this;
 	}
 
-	public function setSize($size)
-	{
+	public function setSize($size) {
 		$this->_size = $size;
 		return $this;
 	}
 
-	public function getSize($forceFetch = null)
-	{
+	public function getSize($forceFetch = null) {
 		if ((true === $forceFetch) || (null === $forceFetch && null === $this->_size)) {
 			if (!$this->getMapper() instanceof Mapper) {
 				throw new Exception(__METHOD__ . ' No mapper set',
@@ -274,8 +254,7 @@ class File
 		return $this->_size;
 	}
 
-	public function setMapper(Mapper $mapper)
-	{
+	public function setMapper(Mapper $mapper) {
 		$this->_mapper = $mapper;
 		return $this;
 	}
@@ -284,8 +263,7 @@ class File
 	 * 
 	 * @return MogileFS_File_Mapper|null
 	 */
-	public function getMapper()
-	{
+	public function getMapper() {
 		return $this->_mapper;
 	}
 }

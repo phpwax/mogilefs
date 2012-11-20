@@ -14,7 +14,7 @@ use MogileFS\File\Mapper\Adapter\Tracker;
  */
 class TrackerTest extends PHPUnit_Framework_TestCase
 {
-	protected $_configFile;
+	protected $test_file;
 	protected $_tracker;
 
 	public function setUp() {
@@ -51,7 +51,7 @@ class TrackerTest extends PHPUnit_Framework_TestCase
 		$this->assertArrayHasKey('class', $info);
 		$this->assertArrayHasKey('size', $info);
 		$this->assertEquals('default', $info['class']);
-		$this->assertEquals(filesize($this->_configFile), $info['size']);
+		$this->assertEquals(filesize($this->test_file), $info['size']);
 		$this->_tracker->delete($key);
 		
 		$this->assertNull($this->_tracker->findInfo($key));
@@ -74,7 +74,7 @@ class TrackerTest extends PHPUnit_Framework_TestCase
 		$this->_tracker->delete($key2);
 
 		$this->assertNull($this->_tracker->findPaths($key));
-		$this->assertEquals(filesize($this->_configFile), $info['size']);
+		$this->assertEquals(filesize($this->test_file), $info['size']);
 	}
 
 	public function testFetchAllPaths()
